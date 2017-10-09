@@ -60,7 +60,6 @@ class MyCanvas extends JComponent{
     private static double imgHeight = 608;
     private static BufferedImage imgDirt = LoadImage("images/dirt.png");
     private static BufferedImage imgJewel = LoadImage("images/jewel.png");
-    private static BufferedImage imgJewelAndDirt = LoadImage("images/jewelAndDirt.png");
     private static BufferedImage imgCleaner = LoadImage("images/cleaner.png");
     private static int offset = 30;
     private float scaleX;
@@ -88,9 +87,8 @@ class MyCanvas extends JComponent{
     public void paint(Graphics g) {
 	Graphics2D g2d = (Graphics2D) g.create();
 	DrawGrid(g2d);
-	DrawImage(g2d, imgCleaner, e.GetCleanerPosition());
 	DrawDirtJewel(g2d);
-	
+	DrawImage(g2d, imgCleaner, e.GetCleanerPosition());
 	repaint(1000);
     }
 
@@ -111,7 +109,7 @@ class MyCanvas extends JComponent{
 			 uiY - offset);					   
 	}
     }
-
+ 
     private void DrawDirtJewel(Graphics2D g2d){
 	House h = e.GetHouse();
 	Boolean dirt;
@@ -120,11 +118,10 @@ class MyCanvas extends JComponent{
 	    for(int j = 0; j < h.GetHeight(); j++){
 		dirt = h.GetRoom(i,j).IsDirt();
 		jewel = h.GetRoom(i,j).IsJewel();
-		if(dirt && jewel){
-		    DrawImage(g2d, imgJewelAndDirt, new Position(i, j));		   
-		} else if(dirt){
+		if(dirt){
 		    DrawImage(g2d, imgDirt, new Position(i, j));
-		} else if(jewel){
+		}
+		if(jewel){
 		    DrawImage(g2d, imgJewel, new Position(i, j));
 		}
 		
