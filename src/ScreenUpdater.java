@@ -1,5 +1,11 @@
+import java.io.IOException;
+import java.io.File;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
@@ -41,7 +47,7 @@ public class ScreenUpdater implements Runnable{
 	    try{
 		java.lang.Thread.sleep(1000);
 	    }catch(InterruptedException ie){
-		//catch exception
+		ie.printStackTrace();
 	    }
 	}
     }
@@ -50,14 +56,20 @@ public class ScreenUpdater implements Runnable{
 
 class MyCanvas extends JComponent{
 
+    private static double imgWidth = 804;
+    private static double imgHeight = 608;
+    private static BufferedImage imgDirt = LoadImage("images/dirt.png");
+    private static BufferedImage imgJewel = LoadImage("images/jewel.png");
+    private static BufferedImage imgJewelAndDirt = LoadImage("images/jewelAndDirt.png");
+    private static BufferedImage imgCleaner = LoadImage("images/cleaner.png");
     private static int offset = 30;
     private float scaleX;
     private float scaleY;
 
     private int uiX;
     private int uiY;
-    Environment e;
-
+    private Environment e;
+    
     public MyCanvas(Environment env, int uX, int uY){
 	super();
 	System.out.println("MyCanvas initialisation");
@@ -74,23 +86,71 @@ class MyCanvas extends JComponent{
     }
     
     public void paint(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g.create();
-	House h = e.GetHouse();
+	Graphics2D g2d = (Graphics2D) g.create();
+	DrawGrid(g2d);
+	DrawImage(g2d, imgCleaner, e.GetCleanerPosition());
+	DrawDirtJewel(g2d);
 	
+	repaint(1000);
+    }
+
+    
+    private void DrawGrid(Graphics2D g2d){
+	House h = e.GetHouse();
 	for(int i = 0; i <= h.GetWidth(); i++){
 	    g2d.drawLine(offset,
 			 offset + (int)(i * scaleY),
 			 uiX - offset,
 			 offset + (int)(i * scaleY));
 	}
-
+	
 	for(int j = 0; j <= h.GetHeight(); j++){
 	    g2d.drawLine(offset + (int)(j * scaleX),
 			 offset,
 			 offset + (int)(j * scaleX),
-			 uiY - offset);
+			 uiY - offset);					   
 	}
-	
-	repaint(1000);
     }
+
+    private void DrawDirtJewel(Graphics2D g2d){
+	House h = e.GetHouse();
+	Boolean dirt;
+	Boolean jewel;
+	for(int i = 0; i < h.GetWidth(); i++){
+	    for(int j = 0; j < h.GetHeight(); j++){
+		dirt = h.GetRoom(i,j).IsDirt();
+		jewel = h.GetRoom(i,j).IsJewel();
+		if(dirt && jewel){
+		    DrawImage(g2d, imgJewelAndDirt, new Position(i, j));		   
+		} else if(dirt){
+		    DrawImage(g2d, imgDirt, new Position(i, j));
+		} else if(jewel){
+		    DrawImage(g2d, imgJewel, new Position(i, j));
+		}
+		
+	    }
+	}
+    }
+
+    
+    private static BufferedImage LoadImage(String path){
+	BufferedImage img = null;
+	try{
+	    img = ImageIO.read(new File(path));
+	}catch(IOException ioe){
+	    ioe.printStackTrace();
+	}
+	return img;
+    }
+    
+    private void DrawImage(Graphics2D g2d, BufferedImage img, Position pos){
+	AffineTransform at = new AffineTransform();
+	at.scale(0.95 * (scaleX / imgWidth), 0.95 * (scaleY / imgHeight));
+	g2d.drawImage(img,
+		      new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR),
+		      (int)(offset + 1.05 * scaleX + pos.x * scaleX),
+		      (int)(offset + 1.05 * scaleY + pos.y * scaleY));
+	
+    }
+
 }

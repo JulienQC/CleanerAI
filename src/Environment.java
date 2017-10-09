@@ -1,24 +1,43 @@
 public class Environment{
 
+    private static double dirtCoolDown = 2000;
+    private static double jewelCoolDown = 5000;
+    
     private House house;
     private Position agent;
+    private double startTime;
+    private double lastDirt;
+    private double lastJewel;
     
     public Environment(int houseX, int houseY){	
 	System.out.println("Environment initialisation");
+	startTime = System.currentTimeMillis();
+	lastDirt = 0;
+	lastJewel = 0;
 	house = new House(houseX, houseY);
-	agent = CleanerSpawn();
+	agent = RandomPosition();
     }
     
     public void GenerateDirt(){
-	System.out.println("GenerateDirt");
+	if(GetTime() - lastDirt > dirtCoolDown){
+	    System.out.println("GenerateDirt at " + GetTime());
+	    Position pos = RandomPosition();
+	    house.GetRoom(pos.x, pos.y).PutDirt();
+	    lastDirt = GetTime();
+	}	       
     }
 
     public void GenerateJewel(){
-	System.out.println("GenerateJewel");
+	if(GetTime() - lastJewel > jewelCoolDown){
+	    System.out.println("GenerateJewel at " + GetTime());
+	    Position pos = RandomPosition();
+	    house.GetRoom(pos.x, pos.y).PutJewel();
+	    lastJewel = GetTime();
+	}	       
     }
 
-    public void GetTime(){
-	System.out.println("GetTime");
+    public double GetTime(){
+	return System.currentTimeMillis() - startTime;
     }
 
     public House GetHouse(){
@@ -26,14 +45,13 @@ public class Environment{
     }
 
     public Position GetCleanerPosition(){
-	System.out.println("GetCleanerPosition");
 	return agent;
     }
 
-    private Position CleanerSpawn(){
+    private Position RandomPosition(){
 	Position pos = new Position();
-	pos.x = (int)(Math.random() * house.GetWidth());
-	pos.y = (int)(Math.random() * house.GetHeight());
+	pos.x = (int)(Math.random() * (house.GetWidth() - 1));
+	pos.y = (int)(Math.random() * (house.GetHeight() - 1));
 	return pos;
     }
 	    

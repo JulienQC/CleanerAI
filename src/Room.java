@@ -1,26 +1,32 @@
 public class Room{
-	
+
+    Boolean isDirt;
+    Boolean isJewel;
+    
     public Room(){
-	//System.out.println("Room default initialisation");
+	isDirt = false;
+	isJewel = false;
     }
 
-    public void IsDirt(){
-	System.out.println("IsDirt");
+    public Room(Boolean dirt, Boolean jewel){
+	isDirt = dirt;
+	isJewel = jewel;
     }
 
-    public void IsJewel(){
-	System.out.println("IsJewel");
+    public Boolean IsDirt(){ 
+	return isDirt;
+    }
+
+    public Boolean IsJewel(){
+	return isJewel;
     }
 
     public void PutDirt(){
-	System.out.println("PutDirt");
+	isDirt = true;
     }
 
     public void PutJewel(){
-	System.out.println("PutJewel");
+	isJewel = true;
     }
 
-    public void GetPosition(){
-	System.out.println("GetPosition");
-    }
 }

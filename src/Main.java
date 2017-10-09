@@ -10,7 +10,11 @@ public class Main{
 	Environment e = new Environment(houseX, houseY);
 	Agent a = new Agent();
 	Runnable r = new ScreenUpdater(e, uiX, uiY);
-	new Thread(r).start();	
+	new Thread(r).start();
+	while(true){
+	    e.GenerateDirt();
+	    e.GenerateJewel();
+	}
     }
 
 }
