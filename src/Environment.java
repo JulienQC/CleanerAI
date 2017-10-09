@@ -1,16 +1,12 @@
 public class Environment{
 
-    private static int defaultHouseSize = 2;
-    private Room[][] house;
+    private House house;
+    private Position agent;
     
-    public Environment(){	
-	System.out.println("Environment default initialisation");
-	house = new Room[defaultHouseSize][defaultHouseSize];
-	for(int i = 0; i < defaultHouseSize; i++){
-	    for(int j = 0; j < defaultHouseSize; j++){
-		house[i][j] = new Room();
-	    }
-	}
+    public Environment(int houseX, int houseY){	
+	System.out.println("Environment initialisation");
+	house = new House(houseX, houseY);
+	agent = CleanerSpawn();
     }
     
     public void GenerateDirt(){
@@ -25,11 +21,20 @@ public class Environment{
 	System.out.println("GetTime");
     }
 
-    public void GetHouse(){
-	System.out.println("GetHouse");
+    public House GetHouse(){
+	return house;
     }
 
-    public void GetCleanerPosition(){
+    public Position GetCleanerPosition(){
 	System.out.println("GetCleanerPosition");
+	return agent;
     }
+
+    private Position CleanerSpawn(){
+	Position pos = new Position();
+	pos.x = (int)(Math.random() * house.GetWidth());
+	pos.y = (int)(Math.random() * house.GetHeight());
+	return pos;
+    }
+	    
 }

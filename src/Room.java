@@ -1,7 +1,7 @@
 public class Room{
 	
     public Room(){
-	System.out.println("Room default initialisation");
+	//System.out.println("Room default initialisation");
     }
 
     public void IsDirt(){

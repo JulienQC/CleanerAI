@@ -7,9 +7,9 @@ public class Main{
 
     public static void main(String args[]) {
 	System.out.println("Program start");
-	Environment e = new Environment();
+	Environment e = new Environment(houseX, houseY);
 	Agent a = new Agent();
-	Runnable r = new ScreenUpdater(houseX, houseY, uiX, uiY);
+	Runnable r = new ScreenUpdater(e, uiX, uiY);
 	new Thread(r).start();	
     }
 
