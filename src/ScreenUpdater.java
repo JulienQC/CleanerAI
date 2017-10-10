@@ -145,8 +145,8 @@ class MyCanvas extends JComponent{
 	at.scale(0.95 * (scaleX / imgWidth), 0.95 * (scaleY / imgHeight));
 	g2d.drawImage(img,
 		      new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR),
-		      (int)(offset + 1.05 * scaleX + pos.x * scaleX),
-		      (int)(offset + 1.05 * scaleY + pos.y * scaleY));
+		      (int)(offset + 0.05 * scaleX + pos.x * scaleX),
+		      (int)(offset + 0.05 * scaleY + pos.y * scaleY));
 	
     }
 

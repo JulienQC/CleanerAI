@@ -48,10 +48,14 @@ public class Environment{
 	return agent;
     }
 
+    public void SetCleanerPosition(Position pos){
+	agent = pos;
+    }
+    
     private Position RandomPosition(){
 	Position pos = new Position();
-	pos.x = (int)(Math.random() * (house.GetWidth() - 1));
-	pos.y = (int)(Math.random() * (house.GetHeight() - 1));
+	pos.x = (int)(Math.random() * house.GetWidth());
+	pos.y = (int)(Math.random() * house.GetHeight());
 	return pos;
     }
 	    

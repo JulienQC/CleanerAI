@@ -1,15 +1,19 @@
 public class Sensor{
 
-    public Sensor(){
+    private Environment e;
+    
+    public Sensor(Environment env){
 	System.out.println("Sensor default initialisation");
+	e = env;
     }
     
     public void GetTime(){
 	System.out.println("GetTime");
     }
 
-    public void GetPosition(){
-	System.out.println("GetPosition");
+    public Position GetPosition(){
+	//System.out.println("GetPosition");
+	return e.GetCleanerPosition();
     }
 
     public void IsDirt(){

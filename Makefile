@@ -14,6 +14,7 @@ CLASS=\
 	Heuristic\
 	Room\
 	House\
+	Action\
 
 
 CLASS_FILES=$(addprefix $(CLASS_PATH)/, $(CLASS:=.class))

@@ -29,4 +29,13 @@ public class Room{
 	isJewel = true;
     }
 
+    public void Clean(){
+	isDirt = false;
+	isJewel = false;
+    }
+
+    public void PickUp(){
+	isJewel = false;
+    }
+
 }

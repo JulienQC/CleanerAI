@@ -8,9 +8,12 @@ public class Main{
     public static void main(String args[]) {
 	System.out.println("Program start");
 	Environment e = new Environment(houseX, houseY);
-	Agent a = new Agent();
-	Runnable r = new ScreenUpdater(e, uiX, uiY);
-	new Thread(r).start();
+
+	Runnable AgentThread = new Agent(e);
+	Runnable GUIThread = new ScreenUpdater(e, uiX, uiY);
+	new Thread(AgentThread).start();
+	new Thread(GUIThread).start();
+	
 	while(true){
 	    e.GenerateDirt();
 	    e.GenerateJewel();
