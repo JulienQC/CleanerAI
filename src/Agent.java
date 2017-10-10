@@ -61,6 +61,7 @@ public class Agent implements Runnable{
     }
 
     public void ChooseAction(){
+	state.path.toString();
 	Room r = state.house.GetRoom(state.position.x, state.position.y);
 	if(r.IsJewel()){
 	    state.action.action = Action.Actions.PICKUP;
@@ -77,7 +78,7 @@ public class Agent implements Runnable{
 		state.action.movement = Action.Movements.RIGHT;
 	    } else if(state.position.y == nextPos.y + 1){
 		state.action.movement = Action.Movements.UP;
-	    } else if(state.position.x == nextPos.x - 1){
+	    } else if(state.position.y == nextPos.y - 1){
 		state.action.movement = Action.Movements.DOWN;
 	    } else{
 		state.action.movement = Action.Movements.IDLE;

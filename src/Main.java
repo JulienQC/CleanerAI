@@ -1,7 +1,7 @@
 public class Main{
 
-    private static int houseX = 3;
-    private static int houseY = 3;
+    private static int houseX = 10;
+    private static int houseY = 10;
     private static int uiX = 720;
     private static int uiY = 720;
 

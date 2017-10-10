@@ -11,4 +11,8 @@ public class Position{
 	x = xArg;
 	y = yArg;
     }
+
+    public String toString(){
+	return "(" + x + ", " + y + ")";
+    }
 }
