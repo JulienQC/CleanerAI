@@ -1,7 +1,7 @@
 public class Environment{
 
-    private static double dirtCoolDown = 2000;
-    private static double jewelCoolDown = 5000;
+    private static double dirtCoolDown = 5000;
+    private static double jewelCoolDown = 10000;
     
     private House house;
     private Position agent;

@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 public class Agent implements Runnable{
 
     private Effector effector;
@@ -14,6 +16,7 @@ public class Agent implements Runnable{
 	sensor = new Sensor(e);
 	state = new State();
 	explorer = new Explorer();
+	
     }
 
     public void run(){
@@ -22,25 +25,65 @@ public class Agent implements Runnable{
 	    UpdateState();
 	    ChooseAction();
 	    Act();
-	    try{
-		java.lang.Thread.sleep(1000);
-	    }catch(InterruptedException ie){
-		ie.printStackTrace();
-	    }
 	}
     }
     
     public void Observe(){
-	
+	state.position = sensor.GetPosition();
+	state.house = sensor.GetHouse();
     }
 
     public void UpdateState(){
-	state.position = sensor.GetPosition();
+	System.out.println(state.step);
+	state.step++;       
+	state.nbDirt = 0;
+	state.nbJewel = 0;
+	Room r;
+	for(int i = 0; i < state.house.GetWidth(); i++){
+	    for(int j = 0; j < state.house.GetHeight(); j++){
+		r = state.house.GetRoom(i,j);
+		if(r.IsDirt()){
+		    state.nbDirt++;
+		}
+		if(r.IsJewel()){
+		    state.nbJewel++;
+		}	    
+	    }
+	}
+
+	if(state.step - state.lastExploration > state.explorationFreq){
+	    explorer.Explore(false, state.position, state.house, state.nbDirt + state.nbJewel);
+	    if(explorer.GetPath() != null){
+		state.path = explorer.GetPath();
+	    }
+	    state.lastExploration = state.step;
+	}
     }
 
     public void ChooseAction(){
-	state.action.action = Action.Actions.MOVE;
-	state.action.movement = Action.Movements.UP;
+	Room r = state.house.GetRoom(state.position.x, state.position.y);
+	if(r.IsJewel()){
+	    state.action.action = Action.Actions.PICKUP;
+	} else if(r.IsDirt()){
+	    state.action.action = Action.Actions.VACUUM;
+	} else if(!state.path.isEmpty()){
+	    state.action.action = Action.Actions.MOVE;
+	    Position nextPos = state.path.removeFirst();
+	    System.out.println("(" + state.position.x + ", " + state.position.y + ")" +
+			       " --> (" + nextPos.x + ", " + nextPos.y + ")");
+	    if(state.position.x == nextPos.x + 1){
+		state.action.movement = Action.Movements.LEFT;
+	    } else if(state.position.x == nextPos.x - 1){
+		state.action.movement = Action.Movements.RIGHT;
+	    } else if(state.position.y == nextPos.y + 1){
+		state.action.movement = Action.Movements.UP;
+	    } else if(state.position.x == nextPos.x - 1){
+		state.action.movement = Action.Movements.DOWN;
+	    } else{
+		state.action.movement = Action.Movements.IDLE;
+	    }
+	}
+	System.out.println(state.action.action + " " + state.action.movement);
     }
 
     public void Act(){

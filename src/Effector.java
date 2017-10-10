@@ -1,5 +1,4 @@
 public class Effector{
-
     
     private Environment e;
     private Agent a;
@@ -24,7 +23,6 @@ public class Effector{
 
     public void Move(Action.Movements m){
 	Position curPos = a.GetState().position;
-	//System.out.println("Agent moving " + m + " from (" + curPos.x + ", " + curPos.y + ")");
 	switch(m){
 	case LEFT:
 	    if(curPos.x > 0){
@@ -49,6 +47,16 @@ public class Effector{
 	default:
 	    break;
 	}
+
+	/* let time for human eye to see the move */
+	if(m != Action.Movements.IDLE){
+	    try{
+		java.lang.Thread.sleep(1000);
+	    }catch(InterruptedException ie){
+		ie.printStackTrace();
+	    }
+	}
+
     }
 
 }
