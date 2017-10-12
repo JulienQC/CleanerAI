@@ -1,7 +1,7 @@
 public class Environment{
 
-    private static double dirtCoolDown = 5000;
-    private static double jewelCoolDown = 10000;
+    private double dirtCoolDown;
+    private double jewelCoolDown;
     
     private House house;
     private Position agent;
@@ -9,13 +9,15 @@ public class Environment{
     private double lastDirt;
     private double lastJewel;
     
-    public Environment(int houseX, int houseY){	
+    public Environment(int houseX, int houseY, int dirtCD, int jewelCD){	
 	System.out.println("Environment initialisation");
 	startTime = System.currentTimeMillis();
 	lastDirt = 0;
 	lastJewel = 0;
 	house = new House(houseX, houseY);
 	agent = RandomPosition();
+	dirtCoolDown = dirtCD;
+	jewelCoolDown = jewelCD;
     }
     
     public void GenerateDirt(){

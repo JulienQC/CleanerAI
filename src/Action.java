@@ -21,5 +21,15 @@ public class Action{
 	action = Actions.MOVE;
 	movement = Movements.IDLE;
     }
+
+    public Action(Actions a, Movements m){
+	action = a;
+	movement = m;
+    }
+
+    public String toString(){
+	return action + " " + movement;
+    }
+
 	
 }

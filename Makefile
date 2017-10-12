@@ -19,6 +19,12 @@ CLASS=\
 
 CLASS_FILES=$(addprefix $(CLASS_PATH)/, $(CLASS:=.class))
 SRC=$(addprefix $(SRC_PATH)/, $(CLASS:=.java))
+DIRTCD=5000
+JEWELCD=10000
+HOUSEX=10
+HOUSEY=10
+HOUSE=$(HOUSEX) $(HOUSEY)
+ARGS=$(HOUSE) $(DIRTCD) $(JEWELCD)
 
 all: pipeline
 
@@ -26,7 +32,7 @@ cc: src
 	javac -d $(CLASS_PATH) $(SRC)
 
 run:
-	@java -cp $(CLASS_PATH) $(CLASS)
+	@java -cp $(CLASS_PATH) $(CLASS) $(ARGS)
 
 pipeline: cc run
 

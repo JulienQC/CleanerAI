@@ -20,6 +20,18 @@ public class House{
 	}
     }
 
+    public House(House h){
+	width = h.GetWidth();
+	height = h.GetHeight();
+	rooms = new Room[width][height];
+	for(int i = 0; i < width; i++){
+	    for(int j = 0; j < height; j++){
+		rooms[i][j] = new Room(h.GetRoom(i,j));
+	    }
+	}
+    }
+
+    
     public int GetWidth(){
 	return width;
     }

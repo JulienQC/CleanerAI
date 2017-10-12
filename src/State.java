@@ -7,13 +7,12 @@ public class State{
     public Position position;
     public int step;
     public int lastExploration;
-    public int explorationFreq;
+    public int explorationIt;
     public Boolean isAlive;
-    public LinkedList<Position> path;
+    public LinkedList<Action> actionSequence;
     public House house;
     public int nbDirt;
     public int nbJewel;
-    public Action action;
     
     public State(){
 	System.out.println("State initialisation");
@@ -22,11 +21,10 @@ public class State{
 	dirtVacuumed = 0;
 	jewelPicked = 0;
 	position = null;
-	explorationFreq = 0;
+	explorationIt = 5; /* no max actionSequence size at first */
 	isAlive = true;
-	path = new LinkedList<Position>();
+	actionSequence = new LinkedList<Action>();
 	nbDirt = 0;
-	nbJewel = 0;
-	action = new Action();
+	nbJewel = 0;	
     }
 }

@@ -2,28 +2,30 @@ import java.util.LinkedList;
 
 public class Explorer{
 
-    private LinkedList<Position> path;
+    private LinkedList<Action> actionSequence;
     private Heuristic heuristic;
     
     public Explorer(){
 	System.out.println("Explorer default initialisation");
-	path = new LinkedList<Position>();
+	actionSequence = new LinkedList<Action>();
 	heuristic = new Heuristic();
     }
 
-    public LinkedList<Position> GetPath(){
-	return path;
+    public LinkedList<Action> GetActionSequence(){
+	return actionSequence;
     }
     
     public void
 	Explore(Boolean informatedAlgorithm, Position pos,
-		House house, int nbObjectives){
-	path.clear();
+		House house, int nbObjectives, int limit){
+	actionSequence.clear();
 	if(nbObjectives == 0){
+	    actionSequence.addLast(new Action(Action.Actions.MOVE, Action.Movements.IDLE));
 	    return;
 	}
+
 	if(!informatedAlgorithm){	    
-	    IterativeDeepeningSearch(path, pos, house, nbObjectives);
+	    IterativeDeepeningSearch(actionSequence, pos, house, nbObjectives, limit);
 	}
 	/*
 	  else{
@@ -33,57 +35,62 @@ public class Explorer{
     }
 
     public void
-	IterativeDeepeningSearch(LinkedList<Position> p, Position pos,
-				 House house, int nbObjectives){
-	Boolean loop = true;
-	int limit = 1;
+	IterativeDeepeningSearch(LinkedList<Action> aS, Position pos,
+				 House house, int nbObjectives, int limit){
+	int l = 1;
 	
-	while(loop){
-	    loop = !LimitedDepthSearch(p, pos, house, nbObjectives, limit++);
+	while(!LimitedDepthSearch(aS, pos, house, nbObjectives, l++) && l < limit){
+	    System.out.println(l + " < " + limit);
 	}
-
-	System.out.println("Exploration OK");
     }
 
     public Boolean
-	LimitedDepthSearch(LinkedList<Position> p, Position pos,
-			   House house, int nbObjectives, int limit){
-
+	LimitedDepthSearch(LinkedList<Action> aS, Position pos,
+			   House house, int nbObjectives, int limit){	
 	if(limit == 0){
+	    actionSequence = aS;
 	    return false;
 	}
-	
+
 	int newObj = nbObjectives;
 	Room currentRoom = house.GetRoom(pos.x,pos.y);
-	if(currentRoom.IsDirt()){
+	if(currentRoom.IsJewel()){
+	    aS.addLast(new Action(Action.Actions.PICKUP, Action.Movements.IDLE));
+	    house.GetRoom(pos.x, pos.y).PickUp();
 	    newObj--;
 	}
-	if(currentRoom.IsJewel()){
+	if(currentRoom.IsDirt()){
+	    aS.addLast(new Action(Action.Actions.VACUUM, Action.Movements.IDLE));
+	    house.GetRoom(pos.x, pos.y).Clean();
 	    newObj--;
 	}
 
-	if(nbObjectives == 0){	    
-	    path = p;
+	if(newObj == 0){	    
+	    actionSequence = aS;
 	    return true;
 	}
 
 	if(pos.x < house.GetWidth() - 1){
-	    if(extendNeighbour(p, new Position(pos.x + 1, pos.y), house, newObj, limit - 1)){
+	    if(extendNeighbour(aS, new Position(pos.x + 1, pos.y),
+			       Action.Movements.RIGHT, house, newObj, limit - 1)){
 		return true;
 	    };
 	}
 	if(pos.y < house.GetHeight() - 1){
-	    if(extendNeighbour(p, new Position(pos.x, pos.y + 1), house, newObj, limit - 1)){
+	    if(extendNeighbour(aS, new Position(pos.x, pos.y + 1),
+			       Action.Movements.DOWN, house, newObj, limit - 1)){
 		return true;
 	    };	    
 	}
 	if(pos.x > 0){
-	    if(extendNeighbour(p, new Position(pos.x - 1, pos.y), house, newObj, limit - 1)){
+	    if(extendNeighbour(aS, new Position(pos.x - 1, pos.y),
+			       Action.Movements.LEFT, house, newObj, limit - 1)){
 		return true;
 	    };	    
 	}
 	if(pos.y > 0){
-	    if(extendNeighbour(p, new Position(pos.x, pos.y - 1), house, newObj, limit - 1)){
+	    if(extendNeighbour(aS, new Position(pos.x, pos.y - 1),
+			       Action.Movements.UP, house, newObj, limit - 1)){
 		return true;
 	    };	    
 	}
@@ -91,18 +98,18 @@ public class Explorer{
 	return false;
     }
 
-    public Boolean extendNeighbour(LinkedList<Position> p, Position nextPos,
+    public Boolean extendNeighbour(LinkedList<Action> aS, Position nextPos, Action.Movements m,
 				   House house, int newObj, int newLimit){
-	LinkedList<Position> nextPath = new LinkedList<Position>(p);
-	nextPath.addLast(nextPos);
-	if(LimitedDepthSearch(nextPath, nextPos, house, newObj, newLimit)){
+	LinkedList<Action> nextActionSequence = new LinkedList<Action>(aS);
+	nextActionSequence.addLast(new Action(Action.Actions.MOVE, m));
+	if(LimitedDepthSearch(nextActionSequence, nextPos, house, newObj, newLimit)){
 	    return true;
 	}
 	return false;
     }
 
     /*
-    public void AStar(LinkedList<Position> p, Position pos,
+    public void AStar(LinkedList<Action> p, Position pos,
 		      House house, int nbObjectives){
 	
     }

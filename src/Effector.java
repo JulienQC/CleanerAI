@@ -11,53 +11,34 @@ public class Effector{
     
     public void Vacuum(){
 	System.out.println("Vacuum");
-	Position curPos = a.GetState().position;	
+	Position curPos = e.GetCleanerPosition();
 	e.GetHouse().GetRoom(curPos.x, curPos.y).Clean();
     }
 
     public void PickUp(){
 	System.out.println("PickUp");
-	Position curPos = a.GetState().position;	
+	Position curPos = e.GetCleanerPosition();
 	e.GetHouse().GetRoom(curPos.x, curPos.y).PickUp();
     }
 
     public void Move(Action.Movements m){
-	Position curPos = a.GetState().position;
+	Position curPos = e.GetCleanerPosition();
 	switch(m){
 	case LEFT:
-	    if(curPos.x > 0){
-		e.SetCleanerPosition(new Position(curPos.x - 1, curPos.y));
-	    }
+	    e.SetCleanerPosition(new Position(curPos.x - 1, curPos.y));
 	    break;
 	case RIGHT:
-	    if(curPos.x < e.GetHouse().GetWidth() - 1){
-		e.SetCleanerPosition(new Position(curPos.x + 1, curPos.y));
-	    }
+	    e.SetCleanerPosition(new Position(curPos.x + 1, curPos.y));
 	    break;
 	case UP:
-	    if(curPos.y > 0){
-		e.SetCleanerPosition(new Position(curPos.x, curPos.y - 1));
-	    }
+	    e.SetCleanerPosition(new Position(curPos.x, curPos.y - 1));
 	    break;
 	case DOWN:
-	    if(curPos.y < e.GetHouse().GetHeight() - 1){
-		e.SetCleanerPosition(new Position(curPos.x, curPos.y + 1));
-	    }
+	    e.SetCleanerPosition(new Position(curPos.x, curPos.y + 1));
 	    break;
 	default:
 	    break;
 	}
-
-	/* let time for human eye to see the move */
-	if(m != Action.Movements.IDLE){
-	    try{
-		java.lang.Thread.sleep(1000);
-	    }catch(InterruptedException ie){
-		ie.printStackTrace();
-	    }
-	}
-
     }
-
 }
 

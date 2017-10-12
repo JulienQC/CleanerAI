@@ -50,54 +50,38 @@ public class Agent implements Runnable{
 		}	    
 	    }
 	}
-
-	if(state.step - state.lastExploration > state.explorationFreq){
-	    explorer.Explore(false, state.position, state.house, state.nbDirt + state.nbJewel);
-	    if(explorer.GetPath() != null){
-		state.path = explorer.GetPath();
-	    }
-	    state.lastExploration = state.step;
-	}
     }
 
-    public void ChooseAction(){
-	state.path.toString();
-	Room r = state.house.GetRoom(state.position.x, state.position.y);
-	if(r.IsJewel()){
-	    state.action.action = Action.Actions.PICKUP;
-	} else if(r.IsDirt()){
-	    state.action.action = Action.Actions.VACUUM;
-	} else if(!state.path.isEmpty()){
-	    state.action.action = Action.Actions.MOVE;
-	    Position nextPos = state.path.removeFirst();
-	    System.out.println("(" + state.position.x + ", " + state.position.y + ")" +
-			       " --> (" + nextPos.x + ", " + nextPos.y + ")");
-	    if(state.position.x == nextPos.x + 1){
-		state.action.movement = Action.Movements.LEFT;
-	    } else if(state.position.x == nextPos.x - 1){
-		state.action.movement = Action.Movements.RIGHT;
-	    } else if(state.position.y == nextPos.y + 1){
-		state.action.movement = Action.Movements.UP;
-	    } else if(state.position.y == nextPos.y - 1){
-		state.action.movement = Action.Movements.DOWN;
-	    } else{
-		state.action.movement = Action.Movements.IDLE;
-	    }
-	}
-	System.out.println(state.action.action + " " + state.action.movement);
+    public void ChooseAction(){	
+	explorer.Explore(false, state.position, state.house, state.nbDirt + state.nbJewel, state.explorationIt);
+	state.actionSequence = explorer.GetActionSequence();
+	state.lastExploration = state.step;
     }
 
     public void Act(){
-	switch(state.action.action){
-	case MOVE:
-	    effector.Move(state.action.movement);
-	    break;
-	case VACUUM:
-	    effector.Vacuum();
-	    break;
-	case PICKUP:
-	    effector.PickUp();
-	    break;
+	Action nextAction;
+	System.out.println(state.actionSequence);
+	while(!state.actionSequence.isEmpty()){
+	    nextAction = state.actionSequence.removeFirst();
+	    System.out.println(nextAction);
+	    switch(nextAction.action){
+	    case MOVE:
+		effector.Move(nextAction.movement);
+		break;
+	    case VACUUM:
+		effector.Vacuum();
+		break;
+	    case PICKUP:
+		effector.PickUp();
+		break;
+	    }
+	    
+	    /* let time for human eye to see the move */
+	    try{
+		java.lang.Thread.sleep(1000);
+	    }catch(InterruptedException ie){
+		ie.printStackTrace();
+	    }
 	}
     }
 

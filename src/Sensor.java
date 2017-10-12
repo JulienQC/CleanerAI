@@ -16,7 +16,7 @@ public class Sensor{
     }
 
     public House GetHouse(){
-	return e.GetHouse();
+	return new House(e.GetHouse());
     }    
 
 }

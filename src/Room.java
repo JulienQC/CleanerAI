@@ -8,6 +8,11 @@ public class Room{
 	isJewel = false;
     }
 
+    public Room(Room r){
+	isDirt = r.IsDirt();
+	isJewel = r.IsJewel();
+    }
+    
     public Room(Boolean dirt, Boolean jewel){
 	isDirt = dirt;
 	isJewel = jewel;
