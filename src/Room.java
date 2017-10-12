@@ -43,4 +43,7 @@ public class Room{
 	isJewel = false;
     }
 
+    public String toString(){
+	return "[" + isJewel + ", " + isDirt + "]";
+    }
 }

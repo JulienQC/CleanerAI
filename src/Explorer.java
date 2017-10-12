@@ -27,6 +27,7 @@ public class Explorer{
 	if(!informatedAlgorithm){	    
 	    IterativeDeepeningSearch(actionSequence, pos, house, nbObjectives, limit);
 	}
+
 	/*
 	  else{
 	    AStar(pos, house, nbObjectives);
@@ -38,9 +39,13 @@ public class Explorer{
 	IterativeDeepeningSearch(LinkedList<Action> aS, Position pos,
 				 House house, int nbObjectives, int limit){
 	int l = 1;
-	
-	while(!LimitedDepthSearch(aS, pos, house, nbObjectives, l++) && l < limit){
-	    System.out.println(l + " < " + limit);
+	House houseCpy = new House(house);
+	while(l < limit && !LimitedDepthSearch(aS, pos, houseCpy, nbObjectives, l)){
+	    /* reset House */
+	    houseCpy = new House(house);
+	    
+	    l++;
+	    System.out.println("limit failed " + l);
 	}
     }
 
@@ -48,21 +53,26 @@ public class Explorer{
 	LimitedDepthSearch(LinkedList<Action> aS, Position pos,
 			   House house, int nbObjectives, int limit){	
 	if(limit == 0){
-	    actionSequence = aS;
+	    //System.out.println(aS + "  obj: " + nbObjectives);
+	    // try{
+	    // 	java.lang.Thread.sleep(100);
+	    // }catch(InterruptedException ie){
+	    // 	ie.printStackTrace();
+	    // }
 	    return false;
 	}
-
+	
 	int newObj = nbObjectives;
 	Room currentRoom = house.GetRoom(pos.x,pos.y);
 	if(currentRoom.IsJewel()){
 	    aS.addLast(new Action(Action.Actions.PICKUP, Action.Movements.IDLE));
-	    house.GetRoom(pos.x, pos.y).PickUp();
-	    newObj--;
+	    currentRoom.PickUp();
+	    return LimitedDepthSearch(aS, pos, house, nbObjectives - 1, limit - 1);
 	}
 	if(currentRoom.IsDirt()){
 	    aS.addLast(new Action(Action.Actions.VACUUM, Action.Movements.IDLE));
-	    house.GetRoom(pos.x, pos.y).Clean();
-	    newObj--;
+	    currentRoom.Clean();
+	    return LimitedDepthSearch(aS, pos, house, nbObjectives - 1, limit - 1);
 	}
 
 	if(newObj == 0){	    
@@ -70,6 +80,7 @@ public class Explorer{
 	    return true;
 	}
 
+	
 	if(pos.x < house.GetWidth() - 1){
 	    if(extendNeighbour(aS, new Position(pos.x + 1, pos.y),
 			       Action.Movements.RIGHT, house, newObj, limit - 1)){
@@ -100,7 +111,7 @@ public class Explorer{
 
     public Boolean extendNeighbour(LinkedList<Action> aS, Position nextPos, Action.Movements m,
 				   House house, int newObj, int newLimit){
-	LinkedList<Action> nextActionSequence = new LinkedList<Action>(aS);
+	LinkedList nextActionSequence = new LinkedList<Action>(aS);
 	nextActionSequence.addLast(new Action(Action.Actions.MOVE, m));
 	if(LimitedDepthSearch(nextActionSequence, nextPos, house, newObj, newLimit)){
 	    return true;

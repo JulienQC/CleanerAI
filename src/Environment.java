@@ -15,6 +15,8 @@ public class Environment{
 	lastDirt = 0;
 	lastJewel = 0;
 	house = new House(houseX, houseY);
+	house.GetRoom(0,0).PutDirt();
+	house.GetRoom(1,1).PutDirt();
 	agent = RandomPosition();
 	dirtCoolDown = dirtCD;
 	jewelCoolDown = jewelCD;

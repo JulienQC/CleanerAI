@@ -21,7 +21,7 @@ public class State{
 	dirtVacuumed = 0;
 	jewelPicked = 0;
 	position = null;
-	explorationIt = 5; /* no max actionSequence size at first */
+	explorationIt = 20; /* no max actionSequence size at first */
 	isAlive = true;
 	actionSequence = new LinkedList<Action>();
 	nbDirt = 0;

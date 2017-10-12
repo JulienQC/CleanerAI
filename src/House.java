@@ -43,4 +43,15 @@ public class House{
     public Room GetRoom(int x, int y){
 	return rooms[x][y];
     }
+
+    public String toString(){
+	String res = new String();
+	for(int j = 0; j < height; j++){
+	    for(int i = 0; i < width; i++){
+		res += rooms[i][j] + ", ";
+	    }
+	    res += "\n";
+	}
+	return res;
+    }
 }

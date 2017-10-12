@@ -9,7 +9,7 @@ public class Main{
 	int houseX = 3;
 	int houseY = 3;
 	int dirtCD = 5000;
-	int jewelCD = 5000;
+	int jewelCD = 10000;
 	LinkedList<Integer> intArgs = new LinkedList<Integer>();
 	for(String arg: args){	    
 	    try{
@@ -25,10 +25,10 @@ public class Main{
 	    houseY = intArgs.removeFirst();
 	}
 	if(!intArgs.isEmpty()){
-	    dirtCD = intArgs.removeFirst();
+	    dirtCD = intArgs.removeFirst() * 1000;
 	}
 	if(!intArgs.isEmpty()){
-	    jewelCD = intArgs.removeFirst();
+	    jewelCD = intArgs.removeFirst() * 1000;
 	}
 
 	
