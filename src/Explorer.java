@@ -34,7 +34,8 @@ public class Explorer{
 	IterativeDeepeningSearch(LinkedList<Action> aS, Position pos,
 				 House house){
 	int l = 1;
-	while(!LimitedDepthSearch(aS, pos, house, l++)){}
+	while(!LimitedDepthSearch(aS, pos, house, l++)){
+	}
     }
 
     public Boolean
@@ -44,10 +45,12 @@ public class Explorer{
 	Room currentRoom = house.GetRoom(pos.x,pos.y);
 	if(currentRoom.IsJewel()){
 	    aS.addLast(new Action(Action.Actions.PICKUP, Action.Movements.IDLE));
+	    actionSequence = aS;
 	    return true;
 	}
 	if(currentRoom.IsDirt()){
 	    aS.addLast(new Action(Action.Actions.VACUUM, Action.Movements.IDLE));
+	    actionSequence = aS;
 	    return true;
 	}
 
