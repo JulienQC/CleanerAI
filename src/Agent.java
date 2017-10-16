@@ -34,36 +34,36 @@ public class Agent implements Runnable{
     }
 
     public void UpdateState(){
-	System.out.println(state.step);
-	state.step++;       
-	state.nbDirt = 0;
-	state.nbJewel = 0;
+	state.dirts = 0;
+	state.jewels = 0;
 	Room r;
 	for(int i = 0; i < state.house.GetWidth(); i++){
 	    for(int j = 0; j < state.house.GetHeight(); j++){
 		r = state.house.GetRoom(i,j);
 		if(r.IsDirt()){
-		    state.nbDirt++;
+		    state.dirts++;
 		}
 		if(r.IsJewel()){
-		    state.nbJewel++;
+		    state.jewels++;
 		}	    
 	    }
 	}
     }
 
-    public void ChooseAction(){	
-	explorer.Explore(false, state.position, state.house, state.nbDirt + state.nbJewel, state.explorationIt);
-	state.actionSequence = explorer.GetActionSequence();
-	state.lastExploration = state.step;
+    public void ChooseAction(){
+	if(state.dirts == 0 || state.jewels == 0){
+	    state.actionSequence = new LinkedList<Action>();
+	    state.actionSequence.addLast(new Action(Action.Actions.MOVE, Action.Movements.IDLE));
+	}else{
+	    explorer.Explore(false, state.position, state.house);
+	    state.actionSequence = explorer.GetActionSequence();
+	}
     }
 
     public void Act(){
 	Action nextAction;
-	System.out.println(state.actionSequence);
 	while(!state.actionSequence.isEmpty()){
 	    nextAction = state.actionSequence.removeFirst();
-	    System.out.println(nextAction);
 	    switch(nextAction.action){
 	    case MOVE:
 		effector.Move(nextAction.movement);
