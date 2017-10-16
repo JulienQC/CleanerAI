@@ -55,7 +55,7 @@ public class Agent implements Runnable{
 	    state.actionSequence = new LinkedList<Action>();
 	    state.actionSequence.addLast(new Action(Action.Actions.MOVE, Action.Movements.IDLE));
 	}else{
-	    explorer.Explore(false, state.position, state.house);
+	    explorer.Explore(true, state.position, state.house);
 	    state.actionSequence = explorer.GetActionSequence();
 	}
     }

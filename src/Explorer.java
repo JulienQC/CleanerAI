@@ -1,7 +1,9 @@
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.text.DecimalFormat;
 
 public class Explorer{
-
+    
     private LinkedList<Action> actionSequence;
     private Heuristic heuristic;
     
@@ -21,16 +23,12 @@ public class Explorer{
 	actionSequence.clear();
 	if(!informatedAlgorithm){	    
 	    IterativeDeepeningSearch(actionSequence, pos, house);
+	}else{
+	    GreedySearch(actionSequence, pos, house);
 	}
-
-	/*
-	  else{
-	    AStar(pos, house, nbObjectives);
-	  }
-	*/
     }
 
-    public void
+    private void
 	IterativeDeepeningSearch(LinkedList<Action> aS, Position pos,
 				 House house){
 	int l = 1;
@@ -38,7 +36,7 @@ public class Explorer{
 	}
     }
 
-    public Boolean
+    private Boolean
 	LimitedDepthSearch(LinkedList<Action> aS, Position pos,
 			   House house, int limit){		
 
@@ -87,103 +85,127 @@ public class Explorer{
 	return false;
     }
 
-    public Boolean extendNeighbour(LinkedList<Action> aS, Position nextPos, Action.Movements m,
-				   House house, int newLimit){
+    private Boolean GreedySearch(LinkedList<Action> aS, Position pos, House house){
+	Room currentRoom = house.GetRoom(pos.x,pos.y);
+	if(currentRoom.IsJewel()){
+	    aS.addLast(new Action(Action.Actions.PICKUP, Action.Movements.IDLE));
+	    actionSequence = aS;
+	    return true;
+	}
+	if(currentRoom.IsDirt()){
+	    aS.addLast(new Action(Action.Actions.VACUUM, Action.Movements.IDLE));
+	    actionSequence = aS;
+	    return true;
+	}
+
+	//System.out.println(aS);
+	try{
+	    java.lang.Thread.sleep(1000);
+	}catch(InterruptedException ie){
+	    ie.printStackTrace();
+	}
+
+	DecimalFormat df = new DecimalFormat("#0.00");
+	String res = new String();
+	res = res + "[\n";
+	for(int j = 0; j < house.GetHeight(); j++){
+	    for(int i = 0; i < house.GetWidth(); i++){
+		res += df.format(heuristic.eval(house, pos)) + ", ";
+	    }
+	    res += "\n";
+	}
+	res = res + "]";
+	System.out.print(res);
+	
+	LinkedList<Node> neighbours = GetNeighbours(pos, house);
+	neighbours.sort(new Comparator<Node>(){
+		@Override
+		public int compare(Node n1, Node n2){
+		    if(n1.value < n2.value){
+			return -1;
+		    }
+		    if(n1.value > n2.value){
+			return 1;
+		    }
+		    return 0;
+		}
+	    });
+
+	
+	for(Node n : neighbours){
+	    if(extendNeighbour2(aS, n.position, n.movement, house)){
+		return true;
+	    }
+	}
+	
+	return false;
+    }
+
+    private Boolean extendNeighbour2(LinkedList<Action> aS, Position nextPos, Action.Movements m,
+				   House house){
 	LinkedList nextActionSequence = new LinkedList<Action>(aS);
 	nextActionSequence.addLast(new Action(Action.Actions.MOVE, m));
-	if(LimitedDepthSearch(nextActionSequence, nextPos, house, newLimit)){
+	if(GreedySearch(nextActionSequence, nextPos, house)){
 	    return true;
 	}
 	return false;
     }
-
-    public void AStar(LinkedList<Action> p, Position pos,
-		      House house, int nbObjectives){  
-		if (p.size() > 10) {return;}   
-		Room currentRoom = house.GetRoom(pos.x,pos.y);
-		if(currentRoom.IsJewel()){
-	    	p.addLast(new Action(Action.Actions.PICKUP, Action.Movements.IDLE));
-	    	house.GetRoom(pos.x, pos.y).PickUp();
-	    	return;
-		}
-		if(currentRoom.IsDirt()){
-	    	p.addLast(new Action(Action.Actions.VACUUM, Action.Movements.IDLE));
-	    	house.GetRoom(pos.x, pos.y).Clean();
-	    	return;
-		}
-		if (nbObjectives == 0) {return;} 
-		    
-		float scoreMax = 0; 
-		int test = 0;
-		if(pos.x < house.GetWidth() - 1){
-			scoreMax = Eval(house, pos.x+1, pos.y);
-			test = 1;	
-		}
-		if(pos.y < house.GetHeight() - 1){
-			float score = Eval(house, pos.x, pos.y+1);
-			if (score > scoreMax) {
-				scoreMax = score;
-				test = 2;
-			}	
-		}
-			if(pos.x > 0){
-				float score = Eval(house, pos.x-1, pos.y);
-				if (score > scoreMax) {
-					scoreMax = score;
-					test = 3;
-				}	
-			}
-			if(pos.y > 0){
-				float score = Eval(house, pos.x, pos.y-1);
-				if (score > scoreMax) {
-					scoreMax = score;
-					test = 4;
-				}	
-			}
-		if (test == 1){
-			p.addLast(new Action(Action.Actions.MOVE, Action.Movements.RIGHT));
-			System.out.println("TEST=1");
-			AStar(p, new Position(pos.x+1, pos.y), house, nbObjectives);
-		}	
-		if (test == 2){
-			p.addLast(new Action(Action.Actions.MOVE, Action.Movements.DOWN));
-			System.out.println("TEST=2");
-			AStar(p, new Position(pos.x, pos.y+1), house, nbObjectives);
-		}
-		if (test == 3){
-			p.addLast(new Action(Action.Actions.MOVE, Action.Movements.LEFT));
-			System.out.println("TEST=3");
-			AStar(p, new Position(pos.x-1, pos.y), house, nbObjectives);
-		}
-		if (test == 4){
-			p.addLast(new Action(Action.Actions.MOVE, Action.Movements.UP));
-			System.out.println("TEST=4");
-			AStar(p, new Position(pos.x, pos.y-1), house, nbObjectives);
-		}	
-    }
     
-    public float Eval(House house, int x, int y){
-    	float score = 0;
-    	for(int i = 0; i < house.GetWidth(); i++){
-	    	for(int j = 0; j < house.GetHeight(); j++){
-				Room r = house.GetRoom(i,j);
-				if(r.IsDirt()){
-		    		score += Math.abs(x-i) + Math.abs(y-j);
-				}
-				if(r.IsJewel()){
-		    		score += Math.abs(x-i) + Math.abs(y-j) - 0.01;
-				}	    
-	    	}
-		}
-		
-		Room here = house.GetRoom(x,y);
-		score = 1/score;
-		if (here.IsJewel()){score *= 2;}
-		if (here.IsDirt()){score *= 2;}
-		System.out.println("SCORE : " + score);
-		return score;
+    private Boolean extendNeighbour(LinkedList<Action> aS, Position nextPos, Action.Movements m,
+    				   House house, int newLimit){
+    	LinkedList nextActionSequence = new LinkedList<Action>(aS);
+    	nextActionSequence.addLast(new Action(Action.Actions.MOVE, m));
+    	if(LimitedDepthSearch(nextActionSequence, nextPos, house, newLimit)){
+    	    return true;
+    	}
+    	return false;
     }
+
+
+    
+    private LinkedList<Node> GetNeighbours(Position pos, House house){
+	LinkedList<Node> neighbours = new LinkedList<Node>();
+	Node n = new Node();
+	if(pos.x < house.GetWidth() - 1){
+	    n.movement = Action.Movements.RIGHT;
+	    n.position = new Position(pos.x + 1, pos.y);
+	    n.value = heuristic.eval(house, pos);
+	    neighbours.addLast(n);
+	}	
+	if(pos.y < house.GetHeight() - 1){
+	    n.movement = Action.Movements.DOWN;
+	    n.position = new Position(pos.x, pos.y + 1);
+	    n.value = heuristic.eval(house, pos);
+	    neighbours.addLast(n);
+	}
+	if(pos.x > 0){
+	    n.movement = Action.Movements.LEFT;	    
+	    n.position = new Position(pos.x - 1, pos.y);
+	    n.value = heuristic.eval(house, pos);
+	    neighbours.addLast(n);
+	}
+	if(pos.y > 0){
+	    n.movement = Action.Movements.UP;
+	    n.position = new Position(pos.x, pos.y - 1);
+	    n.value = heuristic.eval(house, pos);
+	    neighbours.addLast(n);
+	}
+	
+	return neighbours;
+    }
+
 }
 
+class Node{
 
+    public Position position;
+    public double value;
+    public Action.Movements movement;
+
+    public Node(){
+	position = null;
+	value = 0;
+	movement = Action.Movements.IDLE;
+    }
+}
 
