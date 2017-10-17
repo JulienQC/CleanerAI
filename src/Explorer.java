@@ -15,17 +15,25 @@ public class Explorer{
 
     public LinkedList<Action> GetActionSequence(Position pos, AgentHouse house, int limit){
 	actionSequence.clear();
+	double t = System.currentTimeMillis();
 	if(!isInformed){	    
 	    IterativeDeepeningSearch(actionSequence, pos, house, limit);
 	}else{
 	    Comparator<Node> c = new Comparator<Node>(){
 		    @Override
 		    public int compare(Node n1, Node n2){
+			if(n1.value > n2.value){
+			    return -1;
+			}
+			if(n1.value < n2.value){
+			    return 1;
+			}
 			return 0;
 		    }
 		};
 	    RecursiveSearch(actionSequence, pos, house, c, limit);
 	}
+	System.out.println(System.currentTimeMillis() - t);
 	return actionSequence;
     }
 	    

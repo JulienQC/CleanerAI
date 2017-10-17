@@ -13,7 +13,7 @@ public class State{
     public State(){
 	System.out.println("State initialisation");
 	position = null;
-	sequenceSize = 999999; 
+	sequenceSize = 10; 
 	actionSequence = new LinkedList<Action>();
 	isAlive = true;
 	house = null;
