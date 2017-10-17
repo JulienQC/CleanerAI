@@ -11,9 +11,9 @@ CLASS=\
 	Position\
 	State\
 	Explorer\
-	Heuristic\
 	Room\
 	House\
+	AgentHouse\
 	Action\
 
 
@@ -23,8 +23,9 @@ DIRTCD=5 #in seconds
 JEWELCD=10 #in seconds
 HOUSEX=10
 HOUSEY=10
+INFORMED=1 #1: informed; 0: non-informed
 HOUSE=$(HOUSEX) $(HOUSEY)
-ARGS=$(HOUSE) $(DIRTCD) $(JEWELCD)
+ARGS=$(HOUSE) $(DIRTCD) $(JEWELCD) $(INFORMED)
 
 all: pipeline
 

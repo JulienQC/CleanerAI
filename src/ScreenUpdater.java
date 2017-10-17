@@ -71,7 +71,6 @@ class MyCanvas extends JComponent{
     
     public MyCanvas(Environment env, int uX, int uY){
 	super();
-	System.out.println("MyCanvas initialisation");
 	uiX = uX;
 	uiY = uY;
 	Update(env);

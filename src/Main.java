@@ -10,6 +10,8 @@ public class Main{
 	int houseY = 3;
 	int dirtCD = 5000;
 	int jewelCD = 10000;
+	Boolean isInformed = false;
+	
 	LinkedList<Integer> intArgs = new LinkedList<Integer>();
 	for(String arg: args){	    
 	    try{
@@ -30,12 +32,22 @@ public class Main{
 	if(!intArgs.isEmpty()){
 	    jewelCD = intArgs.removeFirst() * 1000;
 	}
+	if(!intArgs.isEmpty()){
+	    if(intArgs.removeFirst() != 0){
+		isInformed = true;
+	    }
+	}
+	
 
 	
-	System.out.println("Program start");
+	System.out.println("Program start:" +
+			   "\nHouse dimensions: (" + houseX + ", " + houseY + ")" +
+			   "\nDirt cooldown: " + (dirtCD / 1000) +
+			   "\nJewel cooldown: " + (jewelCD / 1000) +
+			   "\nInformed exploration: " + isInformed);
 	Environment e = new Environment(houseX, houseY, dirtCD, jewelCD);
 
-	Runnable AgentThread = new Agent(e);
+	Runnable AgentThread = new Agent(e, isInformed);
 	Runnable GUIThread = new ScreenUpdater(e, uiX, uiY);
 	new Thread(AgentThread).start();
 	new Thread(GUIThread).start();

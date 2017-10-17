@@ -15,8 +15,8 @@ public class Sensor{
 	return e.GetCleanerPosition();
     }
 
-    public House GetHouse(){
-	return new House(e.GetHouse());
+    public AgentHouse GetAgentHouse(){
+	return new AgentHouse(e.GetHouse());
     }    
 
 }

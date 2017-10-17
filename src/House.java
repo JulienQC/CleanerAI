@@ -5,7 +5,7 @@ public class House{
     private Room[][] rooms;
     
     public House(int x, int y){
-	System.out.println("House initialisation (" + x + ", " + y + ")");
+	System.out.println("House initialisation");
 	if(x < 0 || y < 0){
 	    System.out.println("House load incorrect");
 	    System.exit(0);

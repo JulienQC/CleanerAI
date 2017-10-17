@@ -6,14 +6,14 @@ public class State{
     public Boolean isAlive;
     public int sequenceSize;
     public LinkedList<Action> actionSequence;
-    public House house;
+    public AgentHouse house;
     public int dirts;
     public int jewels;
     
     public State(){
 	System.out.println("State initialisation");
 	position = null;
-	sequenceSize = 0; 
+	sequenceSize = 999999; 
 	actionSequence = new LinkedList<Action>();
 	isAlive = true;
 	house = null;

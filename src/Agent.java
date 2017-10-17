@@ -7,15 +7,12 @@ public class Agent implements Runnable{
     private State state;
     private Explorer explorer;
     
-    public Agent(Environment e){
-	if(e == null){
-	    System.out.println("Trying to initialise agent with empty environment");
-	    System.exit(0);
-	}
+    public Agent(Environment e, Boolean isInformed){
+	System.out.println("Agent initialisation");
 	effector = new Effector(e, this);
 	sensor = new Sensor(e);
 	state = new State();
-	explorer = new Explorer();
+	explorer = new Explorer(isInformed);
 	
     }
 
@@ -30,7 +27,7 @@ public class Agent implements Runnable{
     
     public void Observe(){
 	state.position = sensor.GetPosition();
-	state.house = sensor.GetHouse();
+	state.house = sensor.GetAgentHouse();
     }
 
     public void UpdateState(){
@@ -48,6 +45,7 @@ public class Agent implements Runnable{
 		}	    
 	    }
 	}
+	state.house.UpdateDirtiness();
     }
 
     public void ChooseAction(){
@@ -55,18 +53,24 @@ public class Agent implements Runnable{
 	    state.actionSequence = new LinkedList<Action>();
 	    state.actionSequence.addLast(new Action(Action.Actions.MOVE, Action.Movements.IDLE));
 	}else{
-	    explorer.Explore(true, state.position, state.house);
-	    state.actionSequence = explorer.GetActionSequence();
+	    state.actionSequence =
+		explorer.GetActionSequence(state.position, state.house, state.sequenceSize);
 	}
     }
 
     public void Act(){
 	Action nextAction;
+	Boolean wait;
 	while(!state.actionSequence.isEmpty()){
 	    nextAction = state.actionSequence.removeFirst();
+	    wait = true;
 	    switch(nextAction.action){
 	    case MOVE:
-		effector.Move(nextAction.movement);
+		if(nextAction.movement != Action.Movements.IDLE){
+		    effector.Move(nextAction.movement);
+		}else{
+		    wait = false;
+		}
 		break;
 	    case VACUUM:
 		effector.Vacuum();
@@ -77,10 +81,12 @@ public class Agent implements Runnable{
 	    }
 	    
 	    /* let time for human eye to see the move */
-	    try{
-		java.lang.Thread.sleep(1000);
-	    }catch(InterruptedException ie){
-		ie.printStackTrace();
+	    if(wait){
+		try{
+		    java.lang.Thread.sleep(1000);
+		}catch(InterruptedException ie){
+		    ie.printStackTrace();
+		}
 	    }
 	}
     }
